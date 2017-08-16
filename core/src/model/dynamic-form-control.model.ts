@@ -5,9 +5,9 @@ import { Utils } from "../utils/core.utils";
 
 export interface DynamicPathable {
 
-    id?: string;
+    id: string;
     index?: number;
-    parent: DynamicPathable;
+    parent?: DynamicPathable;
 }
 
 export interface DynamicValidatorConfig {
@@ -16,7 +16,9 @@ export interface DynamicValidatorConfig {
     args: any;
 }
 
-export type DynamicValidatorsMap = { [validatorKey: string]: any | DynamicValidatorConfig };
+export interface DynamicValidatorsMap {
+  [validatorKey: string]: any | DynamicValidatorConfig
+}
 
 export interface Cls {
 
@@ -52,7 +54,7 @@ export interface DynamicFormControlModelConfig {
 
     disabled?: boolean;
     errorMessages?: DynamicValidatorsMap;
-    id?: string;
+    id: string;
     label?: string;
     relation?: DynamicFormControlRelationGroup[];
 }
@@ -62,11 +64,11 @@ export abstract class DynamicFormControlModel implements DynamicPathable {
     @serializable() cls: any = {};
     @serializable("disabled") _disabled: boolean;
     disabledUpdates: Subject<boolean>;
-    @serializable() errorMessages: DynamicValidatorsMap | null;
+    @serializable() errorMessages: DynamicValidatorsMap;
     @serializable() id: string;
-    @serializable() label: string | null;
-    @serializable() name: string;
-    parent: DynamicPathable | null = null;
+    @serializable() label?: string;
+    @serializable() name: string | null;
+    parent?: DynamicPathable;
     @serializable() relation: DynamicFormControlRelationGroup[];
 
     abstract readonly type: string;
@@ -81,10 +83,10 @@ export abstract class DynamicFormControlModel implements DynamicPathable {
         this.cls.grid = Utils.merge(cls.grid, createEmptyClsConfig());
 
         this._disabled = Utils.isBoolean(config.disabled) ? config.disabled : false;
-        this.errorMessages = config.errorMessages || null;
+        this.errorMessages = config.errorMessages || {};
         this.id = config.id;
-        this.label = config.label || null;
-        this.name = this.id;
+        this.label = config.label;
+        this.name = this.id || null;
         this.relation = Array.isArray(config.relation) ? config.relation : [];
 
         this.disabledUpdates = new Subject<boolean>();

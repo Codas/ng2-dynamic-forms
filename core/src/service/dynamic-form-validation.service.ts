@@ -1,16 +1,16 @@
 import { Injectable, Inject, Optional } from "@angular/core";
 import {
-    AbstractControl,
-    ValidatorFn,
-    AsyncValidatorFn,
-    Validators,
-    NG_VALIDATORS,
-    NG_ASYNC_VALIDATORS
+  AbstractControl,
+  ValidatorFn,
+  AsyncValidatorFn,
+  Validators,
+  NG_VALIDATORS,
+  NG_ASYNC_VALIDATORS,
 } from "@angular/forms";
 import {
-    DynamicFormControlModel,
-    DynamicValidatorConfig,
-    DynamicValidatorsMap
+  DynamicFormControlModel,
+  DynamicValidatorConfig,
+  DynamicValidatorsMap,
 } from "../model/dynamic-form-control.model";
 import { Utils } from "../utils/core.utils";
 import { ValidationUtils } from "../utils/validation.utils";
@@ -22,141 +22,142 @@ export type ValidatorsToken = (ValidatorFn | AsyncValidatorFn)[];
 @Injectable()
 export class DynamicFormValidationService {
 
-    constructor(@Optional() @Inject(NG_VALIDATORS) private NG_VALIDATORS: ValidatorFn[],
-                @Optional() @Inject(NG_ASYNC_VALIDATORS) private NG_ASYNC_VALIDATORS: AsyncValidatorFn[]) {}
+  constructor(@Optional() @Inject(NG_VALIDATORS) private NG_VALIDATORS: ValidatorFn[],
+              @Optional() @Inject(NG_ASYNC_VALIDATORS) private NG_ASYNC_VALIDATORS: AsyncValidatorFn[]) {
+  }
 
 
-    private getValidatorFn(validatorName: string, validatorArgs: any = null,
-                           validatorsToken: ValidatorsToken = this.NG_VALIDATORS): ValidatorFn | AsyncValidatorFn | never {
+  private getValidatorFn(validatorName: string, validatorArgs: any = null,
+                         validatorsToken: ValidatorsToken = this.NG_VALIDATORS): ValidatorFn | AsyncValidatorFn | undefined {
 
-        let validatorFn: ValidatorFactory | ValidatorFn | AsyncValidatorFn | null = null;
+    let validatorFn: ValidatorFactory | ValidatorFn | AsyncValidatorFn | undefined = undefined;
 
-        if (Validators.hasOwnProperty(validatorName)) { // Angular Standard Validators
+    if (Validators.hasOwnProperty(validatorName)) { // Angular Standard Validators
 
-            validatorFn = (Validators as any)[validatorName];
+      validatorFn = (Validators as any)[validatorName];
 
-        } else if (validatorsToken) { // Custom Validators
+    } else if (validatorsToken) { // Custom Validators
 
-            validatorFn = validatorsToken.find(validatorFn => validatorFn.name === validatorName);
+      validatorFn = validatorsToken.find(fn => fn.name === validatorName);
+    }
+
+    if (!Utils.isFunction(validatorFn)) {
+      throw new Error(`validator "${validatorName}" is not provided via NG_VALIDATORS or NG_ASYNC_VALIDATORS`);
+    }
+
+    if (Utils.isDefined(validatorArgs)) {
+      return (validatorFn as Function)(validatorArgs);
+    }
+
+    return validatorFn;
+  }
+
+
+  private getValidatorFns(validatorsConfig: DynamicValidatorsMap,
+                          validatorsToken: ValidatorsToken = this.NG_VALIDATORS): ValidatorFn[] | AsyncValidatorFn[]  {
+
+    let validatorFns: ValidatorFn[] | AsyncValidatorFn[] = [];
+
+    if (Utils.isTrueObject(validatorsConfig)) {
+
+      validatorFns = Object.keys(validatorsConfig).map(validatorFnKey => {
+
+        const validatorConfig = validatorsConfig[validatorFnKey];
+        let validatorName: string,
+          validatorArgs: any;
+
+        if (ValidationUtils.isLongValidatorConfig(validatorConfig)) {
+
+          validatorName = (validatorConfig as DynamicValidatorConfig).name;
+          validatorArgs = (validatorConfig as DynamicValidatorConfig).args;
+
+        } else {
+
+          validatorName = validatorFnKey;
+          validatorArgs = validatorConfig;
         }
 
-        if (!Utils.isFunction(validatorFn)) {
-            throw new Error(`validator "${validatorName}" is not provided via NG_VALIDATORS or NG_ASYNC_VALIDATORS`);
-        }
-
-        if (Utils.isDefined(validatorArgs)) {
-            return (validatorFn as Function)(validatorArgs);
-        }
-
-        return validatorFn;
+        return this.getValidatorFn(validatorName, validatorArgs, validatorsToken);
+      }).filter( valFn => Utils.isDefined(valFn)) as ValidatorFn[] | AsyncValidatorFn[];
     }
 
+    return validatorFns;
+  }
 
-    private getValidatorFns(validatorsConfig: DynamicValidatorsMap,
-                            validatorsToken: ValidatorsToken = this.NG_VALIDATORS): ValidatorFn[] | AsyncValidatorFn[] {
 
-        let validatorFns: ValidatorFn[] | AsyncValidatorFn[] = [];
+  getValidatorByName(validatorName: string, validatorArgs: any = null): ValidatorFn {
+    return this.getValidatorFn(validatorName, validatorArgs) as ValidatorFn;
+  }
 
-        if (Utils.isTrueObject(validatorsConfig)) {
 
-            validatorFns = Object.keys(validatorsConfig).map(validatorFnKey => {
+  getAsyncValidatorByName(validatorName: string, validatorArgs: any = null): AsyncValidatorFn {
+    return this.getValidatorFn(validatorName, validatorArgs, this.NG_ASYNC_VALIDATORS) as AsyncValidatorFn;
+  }
 
-                let validatorConfig = validatorsConfig[validatorFnKey],
-                    validatorName,
-                    validatorArgs;
 
-                if (ValidationUtils.isLongValidatorConfig(validatorConfig)) {
+  getValidator(validatorConfig: DynamicValidatorsMap): ValidatorFn | null {
 
-                    validatorName = (validatorConfig as DynamicValidatorConfig).name;
-                    validatorArgs = (validatorConfig as DynamicValidatorConfig).args;
+    if (Utils.isNonEmptyObject(validatorConfig)) {
 
-                } else {
+      const validatorName = Object.keys(validatorConfig)[0];
 
-                    validatorName = validatorFnKey;
-                    validatorArgs = validatorConfig;
-                }
-
-                return this.getValidatorFn(validatorName, validatorArgs, validatorsToken);
-            });
-        }
-
-        return validatorFns;
+      return this.getValidatorFn(validatorName, validatorConfig[validatorName]) as ValidatorFn;
     }
 
+    return null;
+  }
 
-    getValidatorByName(validatorName: string, validatorArgs: any = null): ValidatorFn {
-        return this.getValidatorFn(validatorName, validatorArgs) as ValidatorFn;
+
+  getAsyncValidator(validatorConfig: DynamicValidatorsMap): AsyncValidatorFn | null {
+
+    if (Utils.isNonEmptyObject(validatorConfig)) {
+
+      const validatorName = Object.keys(validatorConfig)[0];
+
+      return this.getValidatorFn(validatorName, validatorConfig[validatorName], this.NG_ASYNC_VALIDATORS) as AsyncValidatorFn;
     }
 
-
-    getAsyncValidatorByName(validatorName: string, validatorArgs: any = null): AsyncValidatorFn {
-        return this.getValidatorFn(validatorName, validatorArgs, this.NG_ASYNC_VALIDATORS) as AsyncValidatorFn;
-    }
+    return null;
+  }
 
 
-    getValidator(validatorConfig: DynamicValidatorsMap): ValidatorFn | null {
-
-        if (Utils.isNonEmptyObject(validatorConfig)) {
-
-            let validatorName = Object.keys(validatorConfig)[0];
-
-            return this.getValidatorFn(validatorName, validatorConfig[validatorName]) as ValidatorFn;
-        }
-
-        return null;
-    }
+  getValidators(validatorsConfig: DynamicValidatorsMap): ValidatorFn[] {
+    return this.getValidatorFns(validatorsConfig) as ValidatorFn[];
+  }
 
 
-    getAsyncValidator(validatorConfig: DynamicValidatorsMap): AsyncValidatorFn | null {
-
-        if (Utils.isNonEmptyObject(validatorConfig)) {
-
-            let validatorName = Object.keys(validatorConfig)[0];
-
-            return this.getValidatorFn(validatorName, validatorConfig[validatorName], this.NG_ASYNC_VALIDATORS) as AsyncValidatorFn;
-        }
-
-        return null;
-    }
+  getAsyncValidators(validatorsConfig: DynamicValidatorsMap): AsyncValidatorFn[] {
+    return this.getValidatorFns(validatorsConfig, this.NG_ASYNC_VALIDATORS) as AsyncValidatorFn[];
+  }
 
 
-    getValidators(validatorsConfig: DynamicValidatorsMap): ValidatorFn[] {
-        return this.getValidatorFns(validatorsConfig) as ValidatorFn[];
-    }
+  createErrorMessages(control: AbstractControl, model: DynamicFormControlModel): string[] {
 
+    return Object.keys(control.errors || {}).map(errorCode => {
 
-    getAsyncValidators(validatorsConfig: DynamicValidatorsMap): AsyncValidatorFn[] {
-        return this.getValidatorFns(validatorsConfig, this.NG_ASYNC_VALIDATORS) as AsyncValidatorFn[];
-    }
+      const error = control.getError(errorCode);
+      const messageKey = Utils.equals(errorCode, "minlength", "maxlength") ? errorCode.replace("length", "Length") : errorCode;
+      let message = `Validation error: ${errorCode}`;
 
+      if (model.errorMessages.hasOwnProperty(messageKey)) {
 
-    createErrorMessages(control: AbstractControl, model: DynamicFormControlModel): string[] {
+        message = (model.errorMessages[messageKey] as string).replace(/{{\s*(.+?)\s*}}/mg,
+          (match: string, expression: string) => {
 
-        return Object.keys(control.errors || {}).map(errorCode => {
+            let propertySource: any = model,
+              propertyName: string = expression;
 
-            let error = control.getError(errorCode),
-                message = `Validation error: ${errorCode}`,
-                messageKey = Utils.equals(errorCode, "minlength", "maxlength") ? errorCode.replace("length", "Length") : errorCode;
+            if (expression.indexOf("validator.") >= 0) {
 
-            if (model.errorMessages.hasOwnProperty(messageKey)) {
-
-                message = (model.errorMessages[messageKey] as string).replace(/{{\s*(.+?)\s*}}/mg,
-                    (match: string, expression: string) => {
-
-                        let propertySource: any = model,
-                            propertyName: string = expression;
-
-                        if (expression.indexOf("validator.") >= 0) {
-
-                            propertySource = error;
-                            propertyName = expression.replace("validator.", "");
-                        }
-
-                        return propertySource[propertyName] ? propertySource[propertyName] : null;
-                    });
+              propertySource = error;
+              propertyName = expression.replace("validator.", "");
             }
 
-            return message;
-        });
-    }
+            return propertySource[propertyName] ? propertySource[propertyName] : null;
+          });
+      }
+
+      return message;
+    });
+  }
 }

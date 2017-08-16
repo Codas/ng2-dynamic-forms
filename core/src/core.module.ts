@@ -8,23 +8,24 @@ import { DynamicTemplateDirective } from "./directive/dynamic-template.directive
 
 @NgModule({
 
-    imports: [CommonModule, ReactiveFormsModule],
-    declarations: [DynamicIdDirective, DynamicTemplateDirective],
-    exports: [DynamicIdDirective, DynamicTemplateDirective]
+  imports: [CommonModule, ReactiveFormsModule],
+  declarations: [DynamicIdDirective, DynamicTemplateDirective],
+  exports: [DynamicIdDirective, DynamicTemplateDirective],
 })
 
 export class DynamicFormsCoreModule {
 
-    static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders {
 
-        return {
+    return {
 
-            ngModule: DynamicFormsCoreModule,
+      ngModule: DynamicFormsCoreModule,
 
-            providers: [
-                DynamicFormService,
-                DynamicFormValidationService
-            ]
-        };
-    }
+      providers: [
+        DynamicFormService,
+        DynamicFormValidationService,
+      ],
+    };
+  }
 }
+

@@ -18,10 +18,10 @@ export interface DynamicFormGroupModelConfig extends DynamicFormControlModelConf
 
 export class DynamicFormGroupModel extends DynamicFormControlModel {
 
-    @serializable() asyncValidator: DynamicValidatorsMap | null;
+    @serializable() asyncValidator: DynamicValidatorsMap;
     @serializable() group: DynamicFormControlModel[] = [];
     @serializable() legend: string | null;
-    @serializable() validator: DynamicValidatorsMap | null;
+    @serializable() validator: DynamicValidatorsMap;
 
     @serializable() readonly type: string = DYNAMIC_FORM_CONTROL_TYPE_GROUP;
 
@@ -29,17 +29,17 @@ export class DynamicFormGroupModel extends DynamicFormControlModel {
 
         super(config, cls);
 
-        this.asyncValidator = config.asyncValidator || null;
+        this.asyncValidator = config.asyncValidator || {};
         this.group = Array.isArray(config.group) ? config.group : [];
         this.legend = config.legend || null;
-        this.validator = config.validator || null;
+        this.validator = config.validator || {};
     }
 
     get(index: number): DynamicFormControlModel {
         return this.group[index];
     }
 
-    set(index: number, controlModel: DynamicFormControlModel,): void {
+    set(index: number, controlModel: DynamicFormControlModel): void {
         this.group[index] = controlModel;
     }
 

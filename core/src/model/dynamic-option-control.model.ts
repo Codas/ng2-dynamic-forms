@@ -30,7 +30,7 @@ export class DynamicFormOption<T> {
         return this.label;
     }
 
-    set text(text: string) {
+    set text(text: string | null) {
         this.label = text;
     }
 
@@ -74,7 +74,7 @@ export abstract class DynamicOptionControlModel<T> extends DynamicFormValueContr
 
             this.options$ = (options as Observable<DynamicFormOptionConfig<T>[]>).map(optionsConfig => {
 
-                let options = optionsConfig.map(optionConfig => new DynamicFormOption<T>(optionConfig));
+                const options = optionsConfig.map(optionConfig => new DynamicFormOption<T>(optionConfig));
                 this._options = options;
 
                 return options;
@@ -100,7 +100,7 @@ export abstract class DynamicOptionControlModel<T> extends DynamicFormValueContr
 
     insert(index: number, optionConfig: DynamicFormOptionConfig<T>): DynamicFormOption<T> {
 
-        let option = new DynamicFormOption(optionConfig);
+        const option = new DynamicFormOption(optionConfig);
 
         this.options.splice(index, 0, option);
         this.updateOptions$();

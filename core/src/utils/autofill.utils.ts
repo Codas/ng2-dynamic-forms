@@ -129,7 +129,7 @@ export class AutoFillUtils {
 
     static validate(tokens: string): boolean {
 
-        let toExpression = (total: string, currentValue: string) => `${total}|${currentValue}`,
+        const toExpression = (total: string, currentValue: string) => `${total}|${currentValue}`,
             tokensAddress = AUTOFILL_TOKENS_ADDRESS.reduce(toExpression),
             tokensContact = AUTOFILL_TOKENS_CONTACT.reduce(toExpression),
             fields = AUTOFILL_FIELDS.reduce(toExpression),

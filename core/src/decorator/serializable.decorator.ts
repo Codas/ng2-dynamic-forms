@@ -17,11 +17,11 @@ export function serializable(name?: string): (target: any, key: string) => void 
 
 export function getSerializables(target: any): SerializableProperty[] {
 
-    let serializables = [];
+    const serializables: any[] = [];
 
-    for (let key in target) {
+    for (const key of target) {
 
-        let metadata = Reflect.getMetadata(METADATA_KEY_SERIALIZABLE, target, key);
+        const metadata = Reflect.getMetadata(METADATA_KEY_SERIALIZABLE, target, key);
 
         if (metadata) {
             serializables.push(metadata);

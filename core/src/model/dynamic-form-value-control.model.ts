@@ -22,11 +22,11 @@ export interface DynamicFormValueControlModelConfig<T> extends DynamicFormContro
 
 export abstract class DynamicFormValueControlModel<T> extends DynamicFormControlModel {
 
-    @serializable() asyncValidators: DynamicValidatorsMap | null;
+    @serializable() asyncValidators: DynamicValidatorsMap;
     @serializable() hint: string | null;
     @serializable() required: boolean;
     @serializable() tabIndex: number | null;
-    @serializable() validators: DynamicValidatorsMap | null;
+    @serializable() validators: DynamicValidatorsMap;
     @serializable("value") _value: T | null;
     valueUpdates: Subject<T>;
 
@@ -34,22 +34,22 @@ export abstract class DynamicFormValueControlModel<T> extends DynamicFormControl
 
         super(config, cls);
 
-        this.asyncValidators = config.asyncValidators || null;
+        this.asyncValidators = config.asyncValidators || {};
         this.hint = config.hint || null;
         this.required = Utils.isBoolean(config.required) ? config.required : false;
         this.tabIndex = config.tabIndex || null;
-        this.validators = config.validators || null;
+        this.validators = config.validators || {};
         this._value = config.value || null;
 
         this.valueUpdates = new Subject<T>();
         this.valueUpdates.subscribe((value: T) => this.value = value);
     }
 
-    set value(value: T) {
+    set value(value: T | null) {
         this._value = value;
     }
 
-    get value(): T {
+    get value(): T | null {
         return this._value;
     }
 }

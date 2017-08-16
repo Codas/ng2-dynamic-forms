@@ -1,133 +1,133 @@
 import {
-    DynamicFormControlModel,
-    DynamicFormControlModelConfig,
-    DynamicPathable,
-    DynamicValidatorsMap,
-    ClsConfig,
+  DynamicFormControlModel,
+  DynamicFormControlModelConfig,
+  DynamicValidatorsMap,
+  ClsConfig,
 } from "../dynamic-form-control.model";
 import { serializable, serialize } from "../../decorator/serializable.decorator";
 import { Utils } from "../../utils/core.utils";
-
-export class DynamicFormArrayGroupModel implements DynamicPathable {
-
-    $implicit: DynamicFormArrayGroupModel;
-    context: DynamicFormArrayModel;
-    @serializable() group: DynamicFormControlModel[];
-    @serializable() index: number | null;
-
-    constructor(context: DynamicFormArrayModel, group: DynamicFormControlModel[] = [], index: number = null) {
-
-        this.$implicit = this;
-        this.context = context;
-        this.group = group;
-        this.index = index;
-    }
-
-    get parent(): DynamicFormArrayModel {
-        return this.context;
-    }
-
-    get(index: number): DynamicFormControlModel {
-        return this.group[index];
-    }
-
-    toJSON() {
-        return serialize(this);
-    }
-}
 
 export const DYNAMIC_FORM_CONTROL_TYPE_ARRAY = "ARRAY";
 
 export interface DynamicFormArrayModelConfig extends DynamicFormControlModelConfig {
 
-    asyncValidator?: DynamicValidatorsMap;
-    groupAsyncValidator?: DynamicValidatorsMap;
-    groupFactory?: () => DynamicFormControlModel[];
-    groupValidator?: DynamicValidatorsMap;
-    groups?: DynamicFormArrayGroupModel[];
-    initialCount?: number;
-    validator?: DynamicValidatorsMap;
+  asyncValidator?: DynamicValidatorsMap;
+  groupAsyncValidator?: DynamicValidatorsMap;
+  groupFactory?: () => DynamicFormControlModel[];
+  groupValidator?: DynamicValidatorsMap;
+  groups?: DynamicFormArrayGroupModel[];
+  initialCount?: number;
+  validator?: DynamicValidatorsMap;
+}
+
+export class DynamicFormArrayGroupModel {
+
+  $implicit: DynamicFormArrayGroupModel;
+  context: DynamicFormArrayModel;
+  @serializable() id: string;
+  @serializable() group: DynamicFormControlModel[];
+  @serializable() index?: number;
+
+  constructor(context: DynamicFormArrayModel, group: DynamicFormControlModel[] = [], index?: number) {
+    this.$implicit = this;
+    this.context = context;
+    this.group = group;
+    this.index = index;
+  }
+
+  get parent(): DynamicFormArrayModel {
+    return this.context;
+  }
+
+  get(index: number): DynamicFormControlModel {
+    return this.group[index];
+  }
+
+  toJSON() {
+    return serialize(this);
+  }
 }
 
 export class DynamicFormArrayModel extends DynamicFormControlModel {
 
-    @serializable() asyncValidator: DynamicValidatorsMap | null;
-    @serializable() groupAsyncValidator?: DynamicValidatorsMap | null;
-    groupFactory: () => DynamicFormControlModel[];
-    @serializable() groupValidator?: DynamicValidatorsMap | null;
-    @serializable() groups: DynamicFormArrayGroupModel[] = [];
-    @serializable() initialCount: number;
-    @serializable() validator: DynamicValidatorsMap | null;
+  @serializable() asyncValidator: DynamicValidatorsMap;
+  @serializable() groupAsyncValidator: DynamicValidatorsMap;
+  groupFactory?: () => DynamicFormControlModel[];
+  @serializable() groupValidator: DynamicValidatorsMap;
+  @serializable() groups: DynamicFormArrayGroupModel[] = [];
+  @serializable() initialCount: number;
+  @serializable() validator: DynamicValidatorsMap;
 
-    @serializable() readonly groupPrototype: DynamicFormControlModel[]; // only to recreate model from JSON
-    readonly origin: DynamicFormControlModel[]; // deprecated - only for backwards compatibility;
-    @serializable() readonly type: string = DYNAMIC_FORM_CONTROL_TYPE_ARRAY;
+  @serializable() readonly groupPrototype?: DynamicFormControlModel[]; // only to recreate model from JSON
+  readonly origin: DynamicFormControlModel[]; // deprecated - only for backwards compatibility;
+  @serializable() readonly type: string = DYNAMIC_FORM_CONTROL_TYPE_ARRAY;
 
-    constructor(config: DynamicFormArrayModelConfig, cls?: ClsConfig) {
+  constructor(config: DynamicFormArrayModelConfig, cls?: ClsConfig) {
 
-        super(config, cls);
+    super(config, cls);
 
-        if (!Utils.isFunction(config.groupFactory)) {
-            throw new Error("group factory function must be specified for DynamicFormArrayModel");
-        }
-
-        this.asyncValidator = config.asyncValidator || null;
-        this.groupAsyncValidator = config.groupAsyncValidator || null;
-        this.groupFactory = config.groupFactory;
-        this.groupPrototype = this.groupFactory();
-        this.groupValidator = config.groupValidator || null;
-        this.initialCount = Utils.isNumber(config.initialCount) ? config.initialCount : 1;
-        this.validator = config.validator || null;
-
-        if (Array.isArray(config.groups)) {
-
-            config.groups.forEach((arrayGroup, index) => {
-                this.groups.push(new DynamicFormArrayGroupModel(this, arrayGroup.group, arrayGroup.index || index));
-            });
-
-        } else {
-
-            for (let index = 0; index < this.initialCount; index++) {
-                this.addGroup();
-            }
-        }
+    if (!Utils.isFunction(config.groupFactory)) {
+      throw new Error("group factory function must be specified for DynamicFormArrayModel");
     }
 
-    private updateGroupIndex(): void {
-        this.groups.forEach((group, index) => group.index = index);
+    this.asyncValidator = config.asyncValidator || {};
+    this.groupAsyncValidator = config.groupAsyncValidator || {};
+    this.groupFactory = config.groupFactory;
+    this.groupPrototype = this.groupFactory ? this.groupFactory() : undefined;
+    this.groupValidator = config.groupValidator || {};
+    this.initialCount = Utils.isNumber(config.initialCount) ? config.initialCount : 1;
+    this.validator = config.validator || {};
+
+    if (Array.isArray(config.groups)) {
+
+      config.groups.forEach((arrayGroup, index) => {
+        this.groups.push(new DynamicFormArrayGroupModel(this, arrayGroup.group, arrayGroup.index || index));
+      });
+
+    } else {
+
+      for (let index = 0; index < this.initialCount; index++) {
+        this.addGroup();
+      }
     }
+  }
 
-    get size(): number {
-        return this.groups.length;
-    }
+  private updateGroupIndex(): void {
+    this.groups.forEach((group, index) => group.index = index);
+  }
 
-    get(index: number): DynamicFormArrayGroupModel {
-        return this.groups[index];
-    }
+  get size(): number {
+    return this.groups.length;
+  }
 
-    addGroup(): DynamicFormArrayGroupModel {
-        return this.insertGroup(this.groups.length);
-    }
+  get(index: number): DynamicFormArrayGroupModel {
+    return this.groups[index];
+  }
 
-    insertGroup(index: number): DynamicFormArrayGroupModel {
+  addGroup(): DynamicFormArrayGroupModel {
+    return this.insertGroup(this.groups.length);
+  }
 
-        let group = new DynamicFormArrayGroupModel(this, this.groupFactory());
+  insertGroup(index: number): DynamicFormArrayGroupModel {
 
-        this.groups.splice(index, 0, group);
-        this.updateGroupIndex();
+    const groupPrototype = this.groupFactory ? this.groupFactory() : undefined;
+    const group = new DynamicFormArrayGroupModel(this, groupPrototype);
 
-        return group;
-    }
+    this.groups.splice(index, 0, group);
+    this.updateGroupIndex();
 
-    moveGroup(index: number, step: number): void {
+    return group;
+  }
 
-        this.groups.splice(index + step, 0, ...this.groups.splice(index, 1));
-        this.updateGroupIndex();
-    }
+  moveGroup(index: number, step: number): void {
 
-    removeGroup(index: number): void {
+    this.groups.splice(index + step, 0, ...this.groups.splice(index, 1));
+    this.updateGroupIndex();
+  }
 
-        this.groups.splice(index, 1);
-        this.updateGroupIndex();
-    }
+  removeGroup(index: number): void {
+
+    this.groups.splice(index, 1);
+    this.updateGroupIndex();
+  }
 }

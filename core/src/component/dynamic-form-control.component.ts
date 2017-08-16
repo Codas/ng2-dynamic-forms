@@ -49,7 +49,6 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
 
     blur: EventEmitter<DynamicFormControlEvent>;
     change: EventEmitter<DynamicFormControlEvent>;
-    //filter: EventEmitter<DynamicFormControlEvent>;
     focus: EventEmitter<DynamicFormControlEvent>;
 
     private subscriptions: Subscription[] = [];
@@ -60,7 +59,7 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
 
     ngOnChanges(changes: SimpleChanges) {
 
-        let groupChange = changes["group"] as SimpleChange,
+        const groupChange = changes["group"] as SimpleChange,
             modelChange = changes["model"] as SimpleChange;
 
         if (groupChange || modelChange) {
@@ -79,7 +78,7 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
 
                 if (this.model instanceof DynamicFormValueControlModel) {
 
-                    let model = this.model as DynamicFormValueControlModel<DynamicFormControlValue>;
+                    const model = this.model as DynamicFormValueControlModel<DynamicFormControlValue>;
 
                     this.subscriptions.push(model.valueUpdates.subscribe(value => this.onModelValueUpdates(value)));
                 }
@@ -151,7 +150,7 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
 
     protected setControlRelations(): void {
 
-        let relActivation = RelationUtils.findActivationRelation(this.model.relation);
+        const relActivation = RelationUtils.findActivationRelation(this.model.relation);
 
         if (relActivation) {
 
@@ -181,7 +180,7 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
         if (this.model instanceof DynamicFormValueControlModel
         ) {
 
-            let model = this.model as DynamicFormValueControlModel<DynamicFormControlValue>;
+            const model = this.model as DynamicFormValueControlModel<DynamicFormControlValue>;
 
             if (model.value !== value) {
                 model.valueUpdates.next(value);
@@ -209,11 +208,11 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
 
             if (this.model.type === DYNAMIC_FORM_CONTROL_TYPE_INPUT) {
 
-                let model = this.model as DynamicInputModel;
+                const model = this.model as DynamicInputModel;
 
                 if (model.inputType === DYNAMIC_FORM_CONTROL_INPUT_TYPE_FILE) {
 
-                    let inputElement: any = ($event as Event).target || ($event as Event).srcElement;
+                    const inputElement: any = ($event as Event).target || ($event as Event).srcElement;
 
                     model.files = inputElement.files as FileList;
                 }
@@ -229,8 +228,7 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
                 }
             );
 
-        }
-        else if ($event && $event.hasOwnProperty("$event") && $event.hasOwnProperty("control") && $event.hasOwnProperty("model")) {
+        } else if ($event && $event.hasOwnProperty("$event") && $event.hasOwnProperty("control") && $event.hasOwnProperty("model")) {
 
             this.change.emit($event as DynamicFormControlEvent);
 

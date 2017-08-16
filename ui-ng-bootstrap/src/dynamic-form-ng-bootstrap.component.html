@@ -52,7 +52,7 @@
 
                 <fieldset *ngFor="let groupModel of model.groups; let idx = index" [formGroupName]="idx">
 
-                    <app-dynamic-form-bootstrap4-control
+                    <dynamic-form-ng-bootstrap-control
                             *ngFor="let controlModel of groupModel.group"
                             [bindId]="false"
                             [context]="groupModel"
@@ -62,7 +62,7 @@
                             [nestedTemplates]="templates"
                             (blur)="onFocusChange($event)"
                             (change)="onValueChange($event)"
-                            (focus)="onFocusChange($event)"></app-dynamic-form-bootstrap4-control>
+                            (focus)="onFocusChange($event)"></dynamic-form-ng-bootstrap-control>
 
                     <ng-template [ngTemplateOutlet]="template?.templateRef"
                                  [ngTemplateOutletContext]="groupModel"></ng-template>
@@ -90,7 +90,7 @@
 
                 <legend *ngIf="model.legend" [innerHTML]="model.legend"></legend>
 
-                <app-dynamic-form-bootstrap4-control
+                <dynamic-form-ng-bootstrap-control
                         *ngFor="let controlModel of model.group"
                         [asBootstrapFormGroup]="false"
                         [group]="control"
@@ -99,7 +99,7 @@
                         [nestedTemplates]="templates"
                         (blur)="onFocusChange($event)"
                         (change)="onValueChange($event)"
-                        (focus)="onFocusChange($event)"></app-dynamic-form-bootstrap4-control>
+                        (focus)="onFocusChange($event)"></dynamic-form-ng-bootstrap-control>
             </fieldset>
 
 

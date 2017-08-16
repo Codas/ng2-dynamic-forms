@@ -4,11 +4,11 @@ export class Utils {
         return !!(comparables.find(comparable => value === comparable));
     }
 
-    static isBoolean(value: any): boolean {
+    static isBoolean(value: any): value is boolean {
         return typeof value === "boolean";
     }
 
-    static isDefined(value: any): boolean {
+    static isDefined<T>(value: T | undefined | null): value is T {
         return value !== undefined && value !== null;
     }
 
@@ -16,7 +16,7 @@ export class Utils {
         return typeof value === "function";
     }
 
-    static isNumber(value: any): boolean {
+    static isNumber(value: any): value is number {
         return typeof value === "number";
     }
 
@@ -32,7 +32,7 @@ export class Utils {
         return Utils.isTrueObject(value) && Object.getOwnPropertyNames(value).length > 0;
     }
 
-    static isString(value: any): boolean {
+    static isString(value: any): value is string {
         return typeof value === "string";
     }
 
@@ -53,6 +53,8 @@ export class Utils {
         } else if (Array.isArray(mask)) {
 
             return mask.map(value => Utils.maskToString(value)) as string[];
+        } else {
+          return ""
         }
     }
 
@@ -60,13 +62,15 @@ export class Utils {
 
         if (Utils.isString(mask)) {
 
-            let isRegExp = (mask as string).startsWith("/") && (mask as string).endsWith("/");
+            const isRegExp = (mask as string).startsWith("/") && (mask as string).endsWith("/");
 
             return isRegExp ? new RegExp((mask as string).slice(1, mask.length - 1)) : mask;
 
         } else if (Array.isArray(mask)) {
 
             return (mask as string[]).map(value => Utils.maskFromString(value)) as string[];
+        } else {
+          return ""
         }
     }
 
@@ -78,7 +82,7 @@ export class Utils {
 
         if (Utils.isObject(baseValue)) {
 
-            for (let property in baseValue) {
+            for (const property in baseValue) {
 
                 if (baseValue.hasOwnProperty(property) && Utils.isObject(baseValue[property])) {
 
@@ -94,7 +98,7 @@ export class Utils {
 
     static parseJSONReviver(key: string, value: any): any {
 
-        let regexDateISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+        const regexDateISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
 
         return Utils.isString(value) && regexDateISO.test(value) ? new Date(value) : value;
     }

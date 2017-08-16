@@ -29,7 +29,7 @@ export interface DynamicTypeaheadModelConfig<T> extends DynamicFormValueControlM
 
   // Non serializable attributes
   inputFormatter?: (value: any) => string;
-  resultsFormatter?: (value: any) => string;
+  resultFormatter?: (value: any) => string;
   search?: (value: Observable<string>) => Observable<T[]>;
   resultTemplate?: TemplateRef<ResultTemplateContext>;
 }
@@ -49,7 +49,7 @@ export class DynamicTypeaheadModel<T> extends DynamicFormValueControlModel<T[]> 
 
   // Non serializable attributes
   inputFormatter: ((value: any) => string) | null;
-  resultsFormatter: ((value: any) => string) | null;
+  resultFormatter: ((value: any) => string) | null;
   search: ((value: Observable<string>) => Observable<T[]>) | null;
   resultTemplate: TemplateRef<ResultTemplateContext> | null;
 
@@ -67,8 +67,8 @@ export class DynamicTypeaheadModel<T> extends DynamicFormValueControlModel<T[]> 
     this.suffix = isString(config.suffix) ? config.suffix : null;
     this.items = config.items !== undefined ? config.items : null;
 
-    this.inputFormatter = config.inputFormatter !== undefined ? config.inputFormatter : null;
-    this.resultsFormatter = config.resultsFormatter !== undefined ? config.resultsFormatter : null;
+    this.inputFormatter = config.inputFormatter !== undefined ? config.inputFormatter : toString;
+    this.resultFormatter = config.resultFormatter !== undefined ? config.resultFormatter : toString;
     this.search = config.search !== undefined ? config.search : null;
     this.resultTemplate = config.resultTemplate !== undefined ? config.resultTemplate : null;
   }

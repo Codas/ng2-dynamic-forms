@@ -4,6 +4,7 @@ import { ResultTemplateContext } from '@ng-bootstrap/ng-bootstrap/typeahead/type
 import { DynamicFormValueControlModel, DynamicFormValueControlModelConfig } from '../dynamic-form-value-control.model';
 import { serializable } from '../../decorator/serializable.decorator';
 import { ClsConfig } from '../dynamic-form-control.model';
+import { LoadingTracker } from '../../../../../../services/loading.service';
 
 function isBoolean(value: any): value is boolean {
   return typeof value === "boolean";
@@ -44,6 +45,7 @@ export class DynamicTypeaheadModel<T> extends DynamicFormValueControlModel<T[]> 
   @serializable() showHint: boolean | null;
   @serializable() suffix: string | null;
   @serializable() items: T[] | null;
+  @serializable() isLoading: boolean;
 
   @serializable() readonly type: string = DYNAMIC_FORM_CONTROL_TYPE_TYPEAHEAD;
 
@@ -66,11 +68,12 @@ export class DynamicTypeaheadModel<T> extends DynamicFormValueControlModel<T[]> 
     this.showHint = isBoolean(config.showHint) ? config.showHint : null;
     this.suffix = isString(config.suffix) ? config.suffix : null;
     this.items = config.items !== undefined ? config.items : null;
+    this.isLoading = false;
 
     this.inputFormatter = config.inputFormatter !== undefined ? config.inputFormatter : toString;
     this.resultFormatter = config.resultFormatter !== undefined ? config.resultFormatter : toString;
-    this.search = config.search !== undefined ? config.search : null;
     this.resultTemplate = config.resultTemplate !== undefined ? config.resultTemplate : null;
+    this.search = config.search ? config.search : null;
   }
 
   select(items: T[]) {

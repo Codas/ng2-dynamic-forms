@@ -24,7 +24,7 @@ export abstract class DynamicCheckControlModel extends DynamicFormValueControlMo
     }
 
     get checked(): boolean {
-        return this.value;
+        return this.value === null ? false : this.value;
     }
 
     set checked(checked: boolean) {

@@ -151,6 +151,8 @@
              [attr.tabindex]="model.tabIndex"
              [dynamicId]="bindId && model.id"
              [formControlName]="model.id"
+             [ngClass]="model.cls.element.group"
+             class="btn-group"
              *ngIf="model.cls.element.control === '[ngbRadioGroup]'; else regularRadioGroup"
              (change)="onValueChange($event)">
 
@@ -253,9 +255,8 @@
 
           <div *ngIf="model.prefix" class="input-group-addon" [innerHTML]="model.prefix"></div>
 
-          <div class="pos-relative">
-            <input [attr.autoComplete]="model.autoComplete"
-                   [attr.tabindex]="model.tabIndex"
+          <div class="typeahead-container">
+            <input [attr.tabindex]="model.tabIndex"
                    [autofocus]="model.autoFocus"
                    class="form-control"
                    [dynamicId]="bindId && model.id"

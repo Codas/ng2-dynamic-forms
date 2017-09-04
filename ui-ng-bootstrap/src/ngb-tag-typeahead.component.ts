@@ -23,7 +23,7 @@ export interface NgbTagTypeaheadSelectItemEvent {
 @Component({
   selector: "ngb-tagTypeahead",
   template: `
-    <div class="form-control">
+    <div class="form-control typeahead-container">
       <span class="btn btn-primary btn-sm selected" *ngFor="let item of selectedItems">
         {{item}}<span class="close-selected" (click)="remove($event, item)">&nbsp;x</span>
       </span>
@@ -165,7 +165,7 @@ export class NgbTagTypeaheadComponent implements ControlValueAccessor, OnDestroy
     this.selectItem.emit(emitEvt);
   }
 
-  close($e, item) {
+  remove($e, item) {
     const items = this.selectedItems.getValue().slice(0);
     items.splice(items.indexOf(item), 1);
     this.selectedItems.next(items);

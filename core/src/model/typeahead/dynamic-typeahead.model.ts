@@ -55,6 +55,26 @@ export class DynamicTypeaheadModel<T> extends DynamicFormValueControlModel<T[]> 
   search: ((value: Observable<string>) => Observable<T[]>) | null;
   resultTemplate: TemplateRef<ResultTemplateContext> | null;
 
+  get item(): T | null {
+    if (this.value === null || this.value[0] === undefined) {
+      return null;
+    } else {
+      return this.value[0];
+    }
+  }
+
+  set value(newValue /* Explicitly no type annotation to satisfy typescript compiler */) {
+    if (newValue instanceof Array || newValue === null) {
+      this._value = newValue;
+    } else {
+      this._value = [newValue];
+    }
+  }
+
+  get value(): T[] | null {
+    return this._value;
+  }
+
   constructor(config: DynamicTypeaheadModelConfig<T>, cls?: ClsConfig) {
 
     super(config, cls);

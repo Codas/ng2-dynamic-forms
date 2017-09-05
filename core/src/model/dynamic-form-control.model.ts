@@ -17,7 +17,7 @@ export interface DynamicValidatorConfig {
 }
 
 export interface DynamicValidatorsMap {
-  [validatorKey: string]: any | DynamicValidatorConfig
+  [validatorKey: string]: any | DynamicValidatorConfig;
 }
 
 export interface Cls {

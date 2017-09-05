@@ -197,7 +197,8 @@ export abstract class DynamicFormControlComponent implements OnChanges, OnInit, 
 
   onModelHiddenUpdates(value: boolean): void {
     this.model.hidden = value;
-  };
+    value ? this.control.disable() : this.control.enable();
+  }
 
   onValueChange($event: Event | DynamicFormControlEvent | any): void {
     if ($event && $event instanceof Event) { // native HTML5 change event

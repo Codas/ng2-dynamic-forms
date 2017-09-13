@@ -45,7 +45,7 @@ export const enum NGBootstrapFormControlType {
 }
 
 @Component({
-  selector: "dynamic-form-ng-bootstrap-control",
+  selector: "app-dynamic-form-bootstrap4-control'",
   templateUrl: "./dynamic-form-ng-bootstrap.component.html",
 })
 export class DynamicFormNGBootstrapComponent extends DynamicFormControlComponent implements OnChanges {

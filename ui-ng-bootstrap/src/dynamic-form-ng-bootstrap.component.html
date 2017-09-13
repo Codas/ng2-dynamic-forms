@@ -53,7 +53,7 @@
 
         <fieldset *ngFor="let groupModel of model.groups; let idx = index" [formGroupName]="idx">
 
-          <dynamic-form-ng-bootstrap-control
+          <app-dynamic-form-bootstrap4-control
             *ngFor="let controlModel of groupModel.group"
             [bindId]="false"
             [context]="groupModel"
@@ -63,7 +63,7 @@
             [nestedTemplates]="templates"
             (blur)="onFocusChange($event)"
             (change)="onValueChange($event)"
-            (focus)="onFocusChange($event)"></dynamic-form-ng-bootstrap-control>
+            (focus)="onFocusChange($event)"></app-dynamic-form-bootstrap4-control>
 
           <ng-template [ngTemplateOutlet]="template?.templateRef"
                        [ngTemplateOutletContext]="groupModel"></ng-template>
@@ -91,7 +91,7 @@
 
         <legend *ngIf="model.legend" [innerHTML]="model.legend"></legend>
 
-        <dynamic-form-ng-bootstrap-control
+        <app-dynamic-form-bootstrap4-control
           *ngFor="let controlModel of model.group"
           [asBootstrapFormGroup]="false"
           [group]="control"
@@ -100,7 +100,7 @@
           [nestedTemplates]="templates"
           (blur)="onFocusChange($event)"
           (change)="onValueChange($event)"
-          (focus)="onFocusChange($event)"></dynamic-form-ng-bootstrap-control>
+          (focus)="onFocusChange($event)"></app-dynamic-form-bootstrap4-control>
       </fieldset>
 
 
@@ -130,7 +130,7 @@
                [readonly]="model.readOnly"
                [required]="model.required"
                [spellcheck]="model.spellCheck"
-               [textMask]="{mask: (model.mask || false), showMask: model.mask && !(model.placeholder)}"
+               [textMask]="{mask: (model.mask || false), showMask: model.mask && !(model.placeholder), placeholderChar: '\u2000', guide: false}"
                [type]="model.inputType"
                (blur)="onFocusChange($event)"
                (change)="onValueChange($event)"

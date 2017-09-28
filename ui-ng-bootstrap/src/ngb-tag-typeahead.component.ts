@@ -31,7 +31,6 @@ export interface NgbTagTypeaheadSelectItemEvent {
              type="text"
              class="input-clear"
              [attr.tabindex]="tabIndex"
-             [autofocus]="autofocus"
              [focusFirst]="focusFirst"
              [editable]="editable"
              [resultTemplate]="resultTemplate"
@@ -72,11 +71,6 @@ export class NgbTagTypeaheadComponent implements ControlValueAccessor, OnDestroy
    * The tab index of this input element.
    */
   @Input() tabIndex?: number;
-
-  /**
-   * A flag indicating if this input field should automatically receive focus when it is displayed.
-   */
-  @Input() autofocus: boolean = false;
 
   /**
    * A flag indicating if model values should be restricted to the ones selected from the popup only.

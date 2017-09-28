@@ -116,7 +116,6 @@
                [attr.multiple]="model.multiple"
                [attr.step]="model.step"
                [attr.tabindex]="model.tabIndex"
-               [autofocus]="model.autoFocus"
                [class.form-control]="model.inputType !== 'file'"
                [class.form-control-file]="model.inputType === 'file'"
                [dynamicId]="bindId && model.id"
@@ -257,7 +256,6 @@
 
           <div class="typeahead-container">
             <input [attr.tabindex]="model.tabIndex"
-                   [autofocus]="model.autoFocus"
                    class="form-control"
                    [dynamicId]="bindId && model.id"
                    [formControlName]="model.id"
@@ -293,7 +291,6 @@
 
           <ngb-tagTypeahead
             [tabindex]="model.tabIndex"
-            [autofocus]="model.autoFocus"
             [search]="model.search"
             [dynamicId]="bindId && model.id"
             [formControlName]="model.id"

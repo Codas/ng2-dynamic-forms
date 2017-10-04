@@ -31,6 +31,7 @@ export interface NgbTagTypeaheadSelectItemEvent {
              type="text"
              class="input-clear"
              [attr.tabindex]="tabIndex"
+             [autofocus]="autofocus"
              [focusFirst]="focusFirst"
              [editable]="editable"
              [resultTemplate]="resultTemplate"
@@ -66,6 +67,11 @@ export class NgbTagTypeaheadComponent implements ControlValueAccessor, OnDestroy
   @ViewChild('input') inputEl;
   subscription = new Subscription();
   selectedItems = new BehaviorSubject<any[]>([]);
+
+  /**
+   * The tab index of this input element.
+   */
+  @Input() autofocus: boolean = false;
 
   /**
    * The tab index of this input element.

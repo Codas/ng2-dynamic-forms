@@ -1,8 +1,4 @@
-<div [class.form-group]="asBootstrapFormGroup || model.cls.element.container.includes('form-group')"
-     [class.is-invalid]="hasErrorMessaging && !hasFocus && isInvalid"
-     [class.d-none]="model.hidden"
-     [formGroup]="group"
-     [ngClass]="[model.cls.element.container, model.cls.grid.container]">
+<div [formGroup]="group" [class.is-invalid]="hasErrorMessaging && !hasFocus && isInvalid">
 
   <label *ngIf="model.label && type !== 3"
          [attr.for]="model.id"
@@ -213,7 +209,7 @@
               (change)="onValueChange($event)"
               (focus)="onFocusChange($event)">
 
-        <option *ngFor="let option of model.options$ | async"
+        <option *ngFor="let option of model.options$ | async; let idx = index"
                 [attr.name]="model.name"
                 [ngValue]="option.value">{{option.label}}
         </option>

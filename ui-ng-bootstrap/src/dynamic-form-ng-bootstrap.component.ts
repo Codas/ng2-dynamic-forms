@@ -1,9 +1,9 @@
 import {
   Component,
   ContentChildren,
-  EventEmitter,
+  EventEmitter, HostBinding,
   Input,
-  OnChanges,
+  OnChanges, OnInit,
   Output,
   QueryList,
   SimpleChanges,
@@ -48,7 +48,7 @@ export const enum NGBootstrapFormControlType {
   selector: "app-dynamic-form-bootstrap4-control'",
   templateUrl: "./dynamic-form-ng-bootstrap.component.html",
 })
-export class DynamicFormNGBootstrapComponent extends DynamicFormControlComponent implements OnChanges {
+export class DynamicFormNGBootstrapComponent extends DynamicFormControlComponent implements OnChanges, OnInit {
   @Input() asBootstrapFormGroup: boolean = true;
   @Input() bindId: boolean = true;
   // Referencing DynamicFormArrayGroupModel does not compile. Why?
@@ -63,12 +63,40 @@ export class DynamicFormNGBootstrapComponent extends DynamicFormControlComponent
   @Output() change: EventEmitter<DynamicFormControlEvent> = new EventEmitter<DynamicFormControlEvent>();
   @Output() focus: EventEmitter<DynamicFormControlEvent> = new EventEmitter<DynamicFormControlEvent>();
 
+  @HostBinding('class') _cls_class = this.hostClasses;
+
   @ContentChildren(DynamicTemplateDirective) contentTemplates: QueryList<DynamicTemplateDirective>;
 
   type: NGBootstrapFormControlType | null;
 
+  get hostClasses(): string {
+    const classSet = new Set<String>();
+    if (this.asBootstrapFormGroup) {
+      classSet.add('form-group');
+    }
+    if (!this.model) {
+      return Array.from(classSet).join(' ');
+    }
+    if (this.model.hidden) {
+      classSet.add('d-none');
+    }
+
+    classSet.add(this.model.cls.element.container || '');
+    classSet.add(this.model.cls.grid.container || '');
+
+    if (!classSet.has('d-block') && !classSet.has('d-inline-block') && !classSet.has('d-flex') && !classSet.has('d-inline')) {
+      classSet.add("d-block");
+    }
+
+    return Array.from(classSet).join(' ');
+  }
+
   constructor(protected validationService: DynamicFormValidationService) {
     super(validationService);
+  }
+
+  ngOnInit() {
+    super.ngOnInit();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -76,6 +104,7 @@ export class DynamicFormNGBootstrapComponent extends DynamicFormControlComponent
 
     if (changes["model"]) {
       this.type = DynamicFormNGBootstrapComponent.getFormControlType(this.model);
+      this._cls_class = this.hostClasses;
     }
   }
 

@@ -1,4 +1,5 @@
-<div [formGroup]="group" [class.is-invalid]="hasErrorMessaging && !hasFocus && isInvalid">
+<div [formGroup]="group" [class.required]="model.required"
+     [class.is-invalid]="hasErrorMessaging && !hasFocus && isInvalid">
 
   <label *ngIf="model.label && type !== 3"
          [attr.for]="model.id"
@@ -273,7 +274,8 @@
                    (blur)="onFocusChange($event)"
                    (change)="onValueChange($event)"
                    (focus)="onFocusChange($event)"/>
-            <i class="fa fa-circle-o-notch fa-spin" style="position: absolute; right: 0.25em; top: 10px;" *ngIf="model.isLoading"></i>
+            <i class="fa fa-circle-o-notch fa-spin" style="position: absolute; right: 0.25em; top: 10px;"
+               *ngIf="model.isLoading"></i>
           </div>
 
 

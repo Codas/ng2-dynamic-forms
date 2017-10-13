@@ -75,8 +75,9 @@ export abstract class DynamicFormControlModel implements DynamicPathable {
   @serializable() relation: DynamicFormControlRelationGroup[];
 
   abstract readonly type: string;
+  abstract required: boolean;
 
-  constructor(config: DynamicFormControlModelConfig, cls: ClsConfig = {}) {
+  constructor(private config: DynamicFormControlModelConfig, cls: ClsConfig = {}) {
 
     if (Utils.isEmptyString(config.id)) {
       throw new Error("string id must be specified for DynamicFormControlModel");

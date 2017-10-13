@@ -62,6 +62,8 @@ export class DynamicFormArrayModel extends DynamicFormControlModel {
   readonly origin: DynamicFormControlModel[]; // deprecated - only for backwards compatibility;
   @serializable() readonly type: string = DYNAMIC_FORM_CONTROL_TYPE_ARRAY;
 
+  required: boolean = false;
+
   constructor(config: DynamicFormArrayModelConfig, cls?: ClsConfig) {
 
     super(config, cls);

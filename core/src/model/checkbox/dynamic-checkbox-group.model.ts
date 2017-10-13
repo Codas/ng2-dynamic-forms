@@ -11,6 +11,8 @@ export class DynamicCheckboxGroupModel extends DynamicFormGroupModel {
 
     @serializable() readonly type: string = DYNAMIC_FORM_CONTROL_TYPE_CHECKBOX_GROUP;
 
+    required: boolean = false;
+
     constructor(config: DynamicFormGroupModelConfig, cls?: ClsConfig) {
         super(config, cls);
     }

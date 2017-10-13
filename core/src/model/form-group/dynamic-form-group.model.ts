@@ -25,6 +25,8 @@ export class DynamicFormGroupModel extends DynamicFormControlModel {
 
     @serializable() readonly type: string = DYNAMIC_FORM_CONTROL_TYPE_GROUP;
 
+    required: boolean = false;
+
     constructor(config: DynamicFormGroupModelConfig, cls?: ClsConfig) {
 
         super(config, cls);

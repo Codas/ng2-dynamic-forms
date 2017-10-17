@@ -49,7 +49,8 @@ export interface NgbTagTypeaheadSelectItemEvent {
   `,
   styles: [`
     .input-clear {
-      border: 0;
+      border: 0 none;
+      flex-grow: 1;
       outline: 0;
       background-color: transparent;
       min-width: 120px;

@@ -23,14 +23,15 @@ export interface NgbTagTypeaheadSelectItemEvent {
 @Component({
   selector: "ngb-tagTypeahead",
   template: `
-    <div class="form-control typeahead-container">
-      <span class="btn btn-primary btn-sm selected" *ngFor="let item of selectedItems">
-        {{item}}<span class="close-selected" (click)="remove($event, item)">&nbsp;x</span>
+    <div class="typeahead-container d-flex align-items-center">
+      <span class="btn btn-primary btn-sm selected text-nowrap" *ngFor="let item of selectedItems | async">
+        {{ inputFormatter(item) }}
+        <span class="close-selected" (click)="remove($event, item)">&nbsp;x</span>
       </span>
       <input #input
              type="text"
              class="input-clear"
-             [attr.tabindex]="tabIndex"
+             [attr.tabindex]="inputTabindex"
              [autofocus]="autofocus"
              [focusFirst]="focusFirst"
              [editable]="editable"
@@ -59,14 +60,14 @@ export interface NgbTagTypeaheadSelectItemEvent {
     }
 
     .close-selected {
-      margin-left: 0.3rem;
     }
   `],
+  providers: [NGB_TAG_TYPEAHEAD_VALUE_ACCESSOR],
 })
 export class NgbTagTypeaheadComponent implements ControlValueAccessor, OnDestroy, OnInit {
   @ViewChild('input') inputEl;
   subscription = new Subscription();
-  selectedItems = new BehaviorSubject<any[]>([]);
+  readonly selectedItems = new BehaviorSubject<any[]>([]);
 
   /**
    * The tab index of this input element.
@@ -76,7 +77,7 @@ export class NgbTagTypeaheadComponent implements ControlValueAccessor, OnDestroy
   /**
    * The tab index of this input element.
    */
-  @Input() tabIndex?: number;
+  @Input() inputTabindex?: number;
 
   /**
    * A flag indicating if model values should be restricted to the ones selected from the popup only.
@@ -96,12 +97,12 @@ export class NgbTagTypeaheadComponent implements ControlValueAccessor, OnDestroy
   /**
    * A function to convert a given value into string to display in the input field
    */
-  @Input() inputFormatter: (value: any) => string;
+  @Input() inputFormatter: (value: any) => string = toString;
 
   /**
    * A template to override a matching result default display
    */
-  @Input() resultFormatter: (value: any) => string;
+  @Input() resultFormatter: (value: any) => string = toString;
 
   /**
    * A function to transform the provided observable text into the array of results.  Note that the "this" argument
@@ -180,7 +181,13 @@ export class NgbTagTypeaheadComponent implements ControlValueAccessor, OnDestroy
   }
 
   writeValue(obj: any): void {
-    this.selectedItems = obj;
+    if (obj == null) {
+      this.selectedItems.next([]);
+    } else if (Array.isArray(obj)) {
+      this.selectedItems.next(obj);
+    } else {
+      this.selectedItems.next([obj]);
+    }
   }
 
   registerOnChange(fn: any): void {

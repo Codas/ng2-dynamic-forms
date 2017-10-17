@@ -85,7 +85,7 @@ export class DynamicFormNGBootstrapComponent extends DynamicFormControlComponent
     classSet.add(this.model.cls.grid.container || '');
 
     if (!classSet.has('d-block') && !classSet.has('d-inline-block') && !classSet.has('d-flex') && !classSet.has('d-inline')) {
-      classSet.add("d-block");
+      classSet.add("d-block-default");
     }
 
     return Array.from(classSet).join(' ');

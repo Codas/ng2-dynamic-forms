@@ -1,0 +1,19 @@
+.file-upload-container {
+  width: 100%;
+}
+
+.dropzone {
+  height: 100px;
+  width: 100%;
+  position: relative;
+  background-color: #e0e0e0;
+  border: dashed 3px grey;
+  border-radius: 5px;
+
+  span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
